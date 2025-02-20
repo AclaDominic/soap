@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patients</title>
+</head>
+<body>
+    <h2>Patient Registration</h2>
+    <form id="patientForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br>
+        <label for="age">Age:</label>
+        <input type="number" id="age" required><br>
+        <label for="gender">Gender:</label>
+        <select id="gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select><br>
+        <label for="contact_info">Contact Info:</label>
+        <input type="text" id="contact_info"><br>
+        <button type="submit">Register Patient</button>
+    </form>
+    
+    <h3>Patient List</h3>
+    <table id="patientList">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Contact Info</th>
+        </tr>
+    </table>
+    <p id="noPatientsMessage" style="display: none;">No records found.</p>
+    
+    <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+
+    <script>
+        document.getElementById("patientForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const patientData = {
+                register_patient: 1,
+                name: document.getElementById("name").value,
+                age: document.getElementById("age").value,
+                gender: document.getElementById("gender").value,
+                contact_info: document.getElementById("contact_info").value
+            };
+
+            fetch("api.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(patientData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.success || data.error);
+                loadPatients();
+            })
+            .catch(error => console.error("Error registering patient:", error));
+        });
+
+        function loadPatients() {
+            fetch("api.php?fetch_patients=1")
+            .then(response => response.json())
+            .then(data => {
+                let table = document.getElementById("patientList");
+                let noPatientsMessage = document.getElementById("noPatientsMessage");
+                if (data.length === 0) {
+                    noPatientsMessage.style.display = "block";
+                    table.innerHTML = "<tr><th>Name</th><th>Age</th><th>Gender</th><th>Contact Info</th></tr>";
+                } else {
+                    noPatientsMessage.style.display = "none";
+                    table.innerHTML = "<tr><th>Name</th><th>Age</th><th>Gender</th><th>Contact Info</th></tr>" +
+                        data.map(p => `<tr><td>${p.name}</td><td>${p.age}</td><td>${p.gender}</td><td>${p.contact_info}</td></tr>`).join("");
+                }
+            })
+            .catch(error => console.error("Error fetching patients:", error));
+        }
+
+        loadPatients();
+    </script>
+</body>
+</html>
