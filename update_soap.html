@@ -34,6 +34,7 @@
             if (data.name) {
                 document.getElementById("username").textContent = data.name;
             } else {
+                alert(data.error);
                 window.location.href = "login.html";
             }
         })

@@ -43,9 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
 // Get logged-in user info
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['get_user'])) {
     if (isset($_SESSION['user_id'])) {
-        echo json_encode(["name" => $_SESSION['name']]);
+        echo json_encode([
+            "user_id" => $_SESSION['user_id'],
+            "name" => $_SESSION['name']
+        ]);
     } else {
-        echo json_encode(["error" => "Not logged in"]);
+        echo json_encode(["error" => "Please login first."]);
     }
     exit();
 }
