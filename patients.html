@@ -35,6 +35,19 @@
     <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
 
     <script>
+        // Fetch logged-in user's name
+        fetch("api.php?get_user=1")
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); 
+            if (data.name) {
+                document.getElementById("username").textContent = data.name;
+            } else {
+                window.location.href = "login.html";
+            }
+        })
+        .catch(error => console.error("Error fetching user:", error));
+
         document.getElementById("patientForm").addEventListener("submit", function(event) {
             event.preventDefault();
             const patientData = {

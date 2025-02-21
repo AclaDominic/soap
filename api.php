@@ -32,6 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     exit();
 }
 
+// Logout
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
+    session_unset();
+    session_destroy();
+    echo json_encode(["success" => "Logged out successfully."]);
+    exit();
+}
+
 // Get logged-in user info
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['get_user'])) {
     if (isset($_SESSION['user_id'])) {
@@ -131,6 +139,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['fetch_latest_patients']
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['fetch_soap'])) {
     $soap_records = $conn->query("SELECT s.*, p.name AS patient_name FROM soap_records s JOIN patients p ON s.patient_id = p.patient_id")->fetch_all(MYSQLI_ASSOC);
     echo json_encode($soap_records);
+    exit();
+}
+
+// Fetch a single SOAP record for updating
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['get_soap'])) {
+    $soap_id = $_GET['soap_id'];
+    $stmt = $conn->prepare("SELECT s.*, p.name AS patient_name FROM soap_records s JOIN patients p ON s.patient_id = p.patient_id WHERE s.soap_id = ?");
+    $stmt->bind_param("i", $soap_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        echo json_encode($row);
+    } else {
+        echo json_encode(["error" => "SOAP record not found."]);
+    }
+    exit();
+}
+
+// Update SOAP Record
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_soap'])) {
+    $soap_id = $_POST['soap_id'];
+    $subjective = $_POST['subjective'];
+    $objective = $_POST['objective'];
+    $assessment = $_POST['assessment'];
+    $plan = $_POST['plan'];
+    
+    $stmt = $conn->prepare("UPDATE soap_records SET subjective = ?, objective = ?, assessment = ?, plan = ? WHERE soap_id = ?");
+    $stmt->bind_param("ssssi", $subjective, $objective, $assessment, $plan, $soap_id);
+    
+    if ($stmt->execute()) {
+        $response["success"] = "SOAP record updated successfully.";
+    } else {
+        $response["error"] = "Failed to update SOAP record.";
+    }
+    echo json_encode($response);
+    exit();
+}
+
+// Delete SOAP Record
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_soap'])) {
+    $soap_id = $_POST['soap_id'];
+    $stmt = $conn->prepare("DELETE FROM soap_records WHERE soap_id = ?");
+    $stmt->bind_param("i", $soap_id);
+    if ($stmt->execute()) {
+        $response["success"] = "SOAP record deleted successfully.";
+    } else {
+        $response["error"] = "Failed to delete SOAP record.";
+    }
+    echo json_encode($response);
     exit();
 }
 ?>
