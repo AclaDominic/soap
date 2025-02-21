@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View SOAP Records</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        .action-buttons button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>SOAP Records</h2>
+    <input type="text" id="search" placeholder="Search patient..." oninput="filterRecords()">
+    <table>
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Subjective</th>
+                <th>Objective</th>
+                <th>Assessment</th>
+                <th>Plan</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="soapTableBody">
+            <!-- Records will be dynamically inserted here -->
+        </tbody>
+    </table>
+    <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+
+    <script>
+        let soapRecords = [];
+
+        function loadSOAPRecords() {
+            fetch("api.php?fetch_soap=1")
+            .then(response => response.json())
+            .then(data => {
+                soapRecords = data;
+                updateTable(soapRecords);
+            })
+            .catch(error => console.error("Error fetching SOAP records:", error));
+        }
+
+        function updateTable(records) {
+            let tbody = document.getElementById("soapTableBody");
+            tbody.innerHTML = "";
+            records.forEach(record => {
+                let row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${record.patient_name}</td>
+                    <td>${record.subjective}</td>
+                    <td>${record.objective}</td>
+                    <td>${record.assessment}</td>
+                    <td>${record.plan}</td>
+                    <td class="action-buttons">
+                        <button onclick="updateRecord(${record.id})">Update</button> |
+                        <button onclick="deleteRecord(${record.id})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterRecords() {
+            let input = document.getElementById("search").value.toLowerCase();
+            let filtered = soapRecords.filter(r => r.patient_name.toLowerCase().includes(input));
+            updateTable(filtered);
+        }
+
+        function updateRecord(id) {
+            window.location.href = `update_soap.html?id=${id}`;
+        }
+
+        function deleteRecord(id) {
+            if (confirm("Are you sure you want to delete this record?")) {
+                fetch("api.php?delete_soap=" + id, { method: "DELETE" })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.success || data.error);
+                    loadSOAPRecords();
+                })
+                .catch(error => console.error("Error deleting SOAP record:", error));
+            }
+        }
+
+        loadSOAPRecords();
+    </script>
+</body>
+</html>
