@@ -6,28 +6,33 @@
 <body>
     <h2>Login</h2>
     <form id="loginForm">
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Password" required>
+        <input type="email" id="email" name="email" placeholder="Email" required>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <input type="hidden" name="login" value="1"> <!-- Indicate login request -->
         <button type="submit">Login</button>
     </form>
     <p id="message"></p>
 
     <script>
-        document.getElementById("loginForm").onsubmit = function(event) {
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            let email = document.getElementById("email").value;
-            let password = document.getElementById("password").value;
-            let formData = new FormData();
-            formData.append("login", "1");
-            formData.append("email", email);
-            formData.append("password", password);
-            fetch("api.php", { method: "POST", body: formData })
+
+            const formData = new FormData(this);
+
+            fetch("api.php", {
+                method: "POST",
+                body: formData
+            })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("message").textContent = data.success || data.error;
-                if (data.success) window.location.href = "dashboard.html";
-            });
-        };
+                if (data.success) {
+                    window.location.href = data.redirect; // Redirect to respective page
+                } else {
+                    document.getElementById("message").textContent = data.error; // Display error message
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
     </script>
 </body>
 </html>

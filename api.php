@@ -9,28 +9,35 @@ if ($conn->connect_error) {
 
 $response = [];
 
-// User Authentication 
+// User Authentication
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $stmt = $conn->prepare("SELECT user_id, name, password FROM users WHERE email = ?");
+    
+    $stmt = $conn->prepare("SELECT user_id, name, password, role FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
+    
     if ($row = $result->fetch_assoc()) {
         if (password_verify($password, $row['password'])) {
             $_SESSION['user_id'] = $row['user_id'];
             $_SESSION['name'] = $row['name'];
-            $response["success"] = "Login successful";
+            $_SESSION['role'] = $row['role']; // Store role in session
+            
+            // Redirect based on role
+            $redirectPage = ($row['role'] === 'admin') ? "user_management.html" : "dashboard.html";
+            
+            echo json_encode(["success" => "Login successful", "redirect" => $redirectPage]);
         } else {
-            $response["error"] = "Invalid email or password.";
+            echo json_encode(["error" => "Invalid email or password."]);
         }
     } else {
-        $response["error"] = "Invalid email or password.";
+        echo json_encode(["error" => "Invalid email or password."]);
     }
-    echo json_encode($response);
     exit();
 }
+
 
 // Logout
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
@@ -193,4 +200,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_soap'])) {
     echo json_encode($response);
     exit();
 }
+
+// Fetch all users (Admin only)
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['fetch_users'])) {
+    $result = $conn->query("SELECT user_id, name, email, role FROM users");
+    echo json_encode($result->fetch_all(MYSQLI_ASSOC));
+    exit();
+}
+
+
+// Update User (Admin Only)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
+    $user_id = $_POST['user_id'];
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $role = $_POST['role'];
+
+    $stmt = $conn->prepare("UPDATE users SET name = ?, email = ?, role = ? WHERE user_id = ?");
+    $stmt->bind_param("sssi", $name, $email, $role, $user_id);
+
+    if ($stmt->execute()) {
+        echo json_encode(["success" => "User updated successfully."]);
+    } else {
+        echo json_encode(["error" => "Failed to update user."]);
+    }
+    exit();
+}
+
+
 ?>
