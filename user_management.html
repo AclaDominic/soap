@@ -13,6 +13,12 @@
             text-align: left;
         }
 
+        /* Style for disabled users */
+        .disabled-user {
+            background-color: #f2f2f2;
+            color: gray;
+        }
+
         /* Popup Modal Styling */
         .modal {
             display: none;
@@ -54,7 +60,7 @@
         <tbody id="userTableBody"></tbody>
     </table>
 
-    <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+    <button onclick="logout()">Logout</button>
 
     <!-- Popup Modal -->
     <div id="updateModal" class="modal">
@@ -69,8 +75,9 @@
                 <input type="email" id="updateEmail" required><br><br>
                 <label>Role:</label>
                 <select id="updateRole">
-                    <option value="doctor">Doctor</option>
-                    <option value="admin">Admin</option>
+                    <option value="Doctor">Doctor</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Disabled">Disabled</option>
                 </select><br><br>
                 <button type="submit">Update</button>
             </form>
@@ -88,12 +95,17 @@
                         tableBody.innerHTML = ""; // Clear previous content
 
                         data.forEach(user => {
-                            const row = `<tr>
+                            const isDisabled = user.role.toLowerCase() === "disabled";
+                            const rowClass = isDisabled ? "disabled-user" : "";
+
+                            const row = `<tr class="${rowClass}">
                                 <td>${user.name}</td>
                                 <td>${user.email}</td>
                                 <td>${user.role}</td>
                                 <td>
-                                    <button onclick="openUpdateModal(${user.user_id}, '${user.name}', '${user.email}', '${user.role}')">Update</button>
+                                    <button onclick="openUpdateModal(${user.user_id}, '${user.name}', '${user.email}', '${user.role}')" ${isDisabled ? "disabled" : ""}>
+                                        Update
+                                    </button>
                                 </td>
                             </tr>`;
                             tableBody.innerHTML += row;
@@ -147,6 +159,24 @@
             })
             .catch(error => console.error("Error updating user:", error));
         });
+
+        function logout() {
+            fetch("api.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "logout=1"
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.success);
+                    window.location.href = "login.html";
+                } else {
+                    alert("Logout failed.");
+                }
+            })
+            .catch(error => console.error("Error logging out:", error));
+        }
 
         // Load users when page loads
         window.onload = loadUsers;

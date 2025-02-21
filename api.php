@@ -14,21 +14,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
     
+    // Fetch user details including role
     $stmt = $conn->prepare("SELECT user_id, name, password, role FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
     
     if ($row = $result->fetch_assoc()) {
+        // Check if the user is disabled
+        if ($row['role'] === 'Disabled') {
+            echo json_encode(["error" => "Your account is disabled. Please contact the admin."]);
+            exit();
+        }
+
+        // Verify password
         if (password_verify($password, $row['password'])) {
             $_SESSION['user_id'] = $row['user_id'];
             $_SESSION['name'] = $row['name'];
             $_SESSION['role'] = $row['role']; // Store role in session
             
-            // Redirect based on role
-            $redirectPage = ($row['role'] === 'admin') ? "user_management.html" : "dashboard.html";
-            
-            echo json_encode(["success" => "Login successful", "redirect" => $redirectPage]);
+            // Send user role instead of redirecting in PHP
+            echo json_encode(["success" => "Login successful", "role" => $row['role']]);
         } else {
             echo json_encode(["error" => "Invalid email or password."]);
         }
@@ -37,6 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     }
     exit();
 }
+
+
+
 
 
 // Logout

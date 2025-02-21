@@ -26,9 +26,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = data.redirect; // Redirect to respective page
+                    // Redirect based on user role
+                    if (data.role === "Admin") {
+                        window.location.href = "user_management.html";
+                    } else {
+                        window.location.href = "dashboard.html";
+                    }
                 } else {
-                    document.getElementById("message").textContent = data.error; // Display error message
+                    document.getElementById("message").textContent = data.error; // Show error message
                 }
             })
             .catch(error => console.error("Error:", error));
