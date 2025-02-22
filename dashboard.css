@@ -1,0 +1,179 @@
+/* General Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f9fafb;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+h3 {
+    font-size: 1.5em;
+    color: #2d6a4f;
+    margin-bottom: 15px;
+}
+
+/* Header */
+.header {
+    background-color: #2d6a4f;
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header h2 {
+    margin: 0;
+}
+
+.nav {
+    display: flex;
+    gap: 15px;
+}
+
+.nav a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: background 0.3s;
+}
+
+.nav a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Main Content */
+.content {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Search Input */
+#search {
+    display: block;
+    width: 90%;  /* Increased width */
+    padding: 18px 25px;  /* Bigger padding for better UX */
+    margin: 20px auto;  /* Centered with improved spacing */
+    border-radius: 30px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: box-shadow 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 1em;
+}
+
+#search:focus {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Table Styles */
+table {
+    width: 95%;  /* Made the table slightly bigger */
+    margin: 0 auto;  /* Center the table */
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+table th, 
+table td {
+    padding: 20px 25px;  /* Increased padding for readability */
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95em;
+}
+
+table th {
+    background-color: #74c69d;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+table tr:nth-child(even) {
+    background-color: #f3f4f6;
+}
+
+table tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Action Buttons in Table */
+.action-buttons button {
+    background-color: #40916c;
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin: 0 5px;
+    font-size: 0.85em;
+}
+
+.action-buttons button:hover {
+    background-color: #2d6a4f;
+}
+#updt-btn{
+    background-color: #ffb703 ;
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin: 0 5px;
+    font-size: 0.85em;
+}
+#updt-btn:hover {
+    background-color: #ffc123;
+}
+#dlt-btn{
+    background-color: #FF6347;
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin: 0 5px;
+    font-size: 0.85em;
+}
+#dlt-btn:hover {
+    background-color: #FF4500;
+}
+/* Button Styles */
+button {
+    background-color: #40916c;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #2d6a4f;
+    transform: translateY(-2px);
+}
+
+/* Button Group */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}

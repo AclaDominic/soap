@@ -2,29 +2,33 @@
 <html>
 <head>
     <title>Update SOAP Entry</title>
+    <link rel="stylesheet" href="patient.css">
+    <link rel="stylesheet" href="update.css">
 </head>
 <body>
-    <h2>Update SOAP Entry</h2>
     <form id="update_soap">
+        <h2>Update SOAP Entry</h2>
         <p><strong>Patient:</strong> <span id="patientName"></span></p>
         <input type="hidden" id="soapId">
         
         <label for="subjective">Subjective:</label>
-        <textarea id="subjective" required></textarea><br>
+        <textarea id="subjective" required></textarea>
         
         <label for="objective">Objective:</label>
-        <textarea id="objective" required></textarea><br>
+        <textarea id="objective" required></textarea>
         
         <label for="assessment">Assessment:</label>
-        <textarea id="assessment" required></textarea><br>
+        <textarea id="assessment" required></textarea>
         
         <label for="plan">Plan:</label>
-        <textarea id="plan" required></textarea><br>
+        <textarea id="plan" required></textarea>
         
-        <button type="submit">Update Entry</button>
+        <div class="button-container">
+            <button type="submit" class="update-button">Update Entry</button>
+            <button type="button" class="cancel-button" onclick="window.location.href='soap_view.html'">Cancel</button>
+        </div>
     </form>
-    <button onclick="window.location.href='soap_view.html'">Cancel</button>
-    
+
     <script>
         // Fetch logged-in user's name
         fetch("api.php?get_user=1")
