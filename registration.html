@@ -15,7 +15,7 @@
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="Enter password" required>
             <label for="role">Role</label>
-            <select id="role">
+            <select id="role" required>
                 <option value="default">- - Select - -</option>
                 <option value="Doctor">Doctor</option>
                 <option value="Admin">Admin</option>
@@ -30,6 +30,14 @@
             
         document.getElementById("registerForm").onsubmit = function(event) {
             event.preventDefault();
+            
+            let role = document.getElementById("role").value;
+            if (role === "default") {
+                document.getElementById("message").textContent = "Please select a role.";
+                document.getElementById("message").style.color = "red";
+                return;
+            }
+
             let formData = new FormData();
             formData.append("register", "1");
             formData.append("name", document.getElementById("name").value);
